@@ -1,0 +1,29 @@
+{
+  "name": "vas-desktop",
+  "version": "1.0.0-alpha.1",
+  "private": true,
+  "description": "VAS Desktop — Universal AI Runtime. Docker Desktop for AI Agents.",
+  "author": "VAS Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
+    "test:e2e": "turbo run test:e2e",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "clean": "turbo run clean && rimraf node_modules",
+    "typecheck": "turbo run typecheck",
+    "db:generate": "pnpm --filter @vas/database db:generate",
+    "db:push": "pnpm --filter @vas/database db:push",
+    "desktop:dev": "pnpm --filter @vas/desktop dev",
+    "desktop:build": "pnpm --filter @vas/desktop build",
+    "desktop:package": "pnpm --filter @vas/desktop package"
+  }
+}

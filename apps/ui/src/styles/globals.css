@@ -1,0 +1,151 @@
+@import 'tailwindcss';
+
+/* ─── Dark mode variant ─── */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ─── VAS Design System Tokens ─── */
+@theme {
+  /* Background colors */
+  --color-bg-primary: #09090B;
+  --color-bg-secondary: rgba(255, 255, 255, 0.03);
+  --color-bg-tertiary: rgba(255, 255, 255, 0.06);
+  --color-bg-hover: rgba(255, 255, 255, 0.06);
+  --color-bg-active: rgba(255, 255, 255, 0.09);
+
+  /* Border colors */
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-focus: #00C2FF;
+
+  /* Accent */
+  --color-accent: #00C2FF;
+  --color-accent-hover: #33CEFF;
+  --color-accent-muted: rgba(0, 194, 255, 0.12);
+
+  /* Text */
+  --color-text-primary: rgba(255, 255, 255, 0.92);
+  --color-text-secondary: rgba(255, 255, 255, 0.56);
+  --color-text-tertiary: rgba(255, 255, 255, 0.36);
+
+  /* Status */
+  --color-success: #00D68F;
+  --color-warning: #FFB800;
+  --color-error: #FF3B5C;
+  --color-info: #00C2FF;
+
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, 'Cascadia Code', 'Fira Code', monospace;
+
+  /* Radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+}
+
+/* ─── shadcn/ui CSS Variable Overrides ─── */
+:root {
+  --background: 0 0% 3.9%;
+  --foreground: 0 0% 95%;
+  --card: 0 0% 5%;
+  --card-foreground: 0 0% 95%;
+  --popover: 0 0% 5%;
+  --popover-foreground: 0 0% 95%;
+  --primary: 193 100% 50%;
+  --primary-foreground: 0 0% 3.9%;
+  --secondary: 0 0% 10%;
+  --secondary-foreground: 0 0% 95%;
+  --muted: 0 0% 12%;
+  --muted-foreground: 0 0% 56%;
+  --accent: 193 100% 50%;
+  --accent-foreground: 0 0% 3.9%;
+  --destructive: 350 100% 61%;
+  --destructive-foreground: 0 0% 95%;
+  --border: 0 0% 12%;
+  --input: 0 0% 12%;
+  --ring: 193 100% 50%;
+  --radius: 0.75rem;
+}
+
+/* ─── Custom Scrollbar ─── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* ─── Base Styles ─── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  background-color: #09090B;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background-color: rgba(0, 194, 255, 0.25);
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* ─── Drag Region ─── */
+.drag-region {
+  -webkit-app-region: drag;
+  app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+  app-region: no-drag;
+}
+
+/* ─── Glass Effect ─── */
+.glass {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+/* ─── Focus Ring ─── */
+.focus-ring:focus-visible {
+  outline: 2px solid #00C2FF;
+  outline-offset: 2px;
+}
+
+/* ─── Pulsing Status Indicator ─── */
+@keyframes pulse-status {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-status {
+  animation: pulse-status 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
