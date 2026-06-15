@@ -22,7 +22,6 @@ import type {
   HealthCheckResult,
   AnthropicRequest,
   AnthropicResponse,
-  AnthropicContentBlock,
   AnthropicStreamEvent,
   AnthropicTextBlock,
   AnthropicToolUseBlock,

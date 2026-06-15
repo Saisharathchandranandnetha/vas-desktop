@@ -209,14 +209,19 @@ const CREATE_INDEX_STATEMENTS = [
 export function runMigrations(db: VasDatabase): void {
   const sqlite = getSqlite();
 
-  sqlite.transaction(() => {
+  sqlite.run('BEGIN TRANSACTION;');
+  try {
     for (const stmt of CREATE_TABLE_STATEMENTS) {
-      sqlite.exec(stmt);
+      sqlite.run(stmt);
     }
     for (const stmt of CREATE_INDEX_STATEMENTS) {
-      sqlite.exec(stmt);
+      sqlite.run(stmt);
     }
-  })();
+    sqlite.run('COMMIT;');
+  } catch (err) {
+    sqlite.run('ROLLBACK;');
+    throw err;
+  }
 
   // Set schema version in settings for future migration tracking
   db.run(

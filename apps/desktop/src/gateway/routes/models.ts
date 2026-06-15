@@ -19,7 +19,7 @@ export async function registerModelRoutes(server: FastifyInstance): Promise<void
       }> = [];
 
       try {
-        const { getSettingsStore } = await import('../main/ipc/settings.js');
+        const { getSettingsStore } = await import('../../main/ipc/settings.js');
         const store = getSettingsStore();
         const allProviders = (store.get('providers') as typeof providers) ?? [];
         providers = allProviders.filter((p) => p.isEnabled);
@@ -76,7 +76,7 @@ export async function registerModelRoutes(server: FastifyInstance): Promise<void
       }> = [];
 
       try {
-        const { getSettingsStore } = await import('../main/ipc/settings.js');
+        const { getSettingsStore } = await import('../../main/ipc/settings.js');
         const store = getSettingsStore();
         const allProviders = (store.get('providers') as typeof providers) ?? [];
         providers = allProviders.filter((p) => p.isEnabled);

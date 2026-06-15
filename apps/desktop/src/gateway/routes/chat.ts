@@ -7,111 +7,28 @@ import type {
   ChatCompletionChunk,
   TokenUsage,
 } from '@vas/shared';
-import { PROVIDER_DEFAULTS, MODEL_COSTS, calculateCost } from '@vas/shared';
+import { MODEL_COSTS, calculateCost } from '@vas/shared';
 import { incrementRequestCount } from '../server.js';
+import { RoutingEngine } from '../engine.js';
 
-// ─── In-memory provider store reader ───
-// Reads from the settings store (same data as IPC providers handler)
-// In production, this would read from the database
-interface ResolvedProvider {
-  id: string;
-  name: string;
-  type: string;
-  baseUrl: string;
-  apiKey: string;
-  headers: Record<string, string>;
-}
-
-/**
- * Resolves a model name to a provider and retrieves the decrypted API key.
- * This is a simplified version — full routing engine will be added later.
- */
-async function resolveModelToProvider(model: string): Promise<ResolvedProvider | null> {
-  // Dynamic import to access the settings store from the Electron main process
-  // without creating a circular dependency
-  let getSettingsStore: () => { get: (key: string) => unknown };
-  try {
-    const settingsModule = await import('../main/ipc/settings.js');
-    getSettingsStore = settingsModule.getSettingsStore;
-  } catch {
-    console.error('[VAS:Chat] Could not import settings store');
-    return null;
-  }
-
-  const store = getSettingsStore();
-  const providers = (store.get('providers') as Array<{
-    id: string;
-    name: string;
-    type: string;
-    baseUrl: string;
-    apiKeyEncrypted: string;
-    headers: Record<string, string>;
-    isEnabled: boolean;
-    modelsDiscovered: string[];
-  }>) ?? [];
-
-  // Find a provider that has this model in its discovered models, or fall back to
-  // the first enabled provider with a matching type heuristic
-  let matched = providers.find(
-    (p) => p.isEnabled && p.modelsDiscovered.includes(model),
-  );
-
-  // Heuristic: try to match by model prefix → provider type
-  if (!matched) {
-    if (model.startsWith('gpt-') || model.startsWith('o1-') || model.startsWith('o3-') || model.startsWith('o4-')) {
-      matched = providers.find((p) => p.isEnabled && (p.type === 'openai' || p.type === 'openai_compat'));
-    } else if (model.startsWith('claude-')) {
-      matched = providers.find((p) => p.isEnabled && p.type === 'anthropic');
-    } else if (model.startsWith('gemini-')) {
-      matched = providers.find((p) => p.isEnabled && p.type === 'gemini');
-    } else if (model.startsWith('deepseek-')) {
-      matched = providers.find((p) => p.isEnabled && p.baseUrl.includes('deepseek'));
-    } else {
-      // Fall back to any enabled provider (prefer openai_compat)
-      matched = providers.find((p) => p.isEnabled && p.type === 'openai_compat')
-        ?? providers.find((p) => p.isEnabled);
-    }
-  }
-
-  if (!matched) return null;
-
-  // Decrypt API key
-  let apiKey = '';
-  if (matched.apiKeyEncrypted) {
-    try {
-      const { safeStorage } = await import('electron');
-      const buffer = Buffer.from(matched.apiKeyEncrypted, 'base64');
-      apiKey = safeStorage.decryptString(buffer);
-    } catch (err) {
-      console.error('[VAS:Chat] Failed to decrypt API key:', err);
-    }
-  }
-
-  return {
-    id: matched.id,
-    name: matched.name,
-    type: matched.type,
-    baseUrl: matched.baseUrl,
-    apiKey,
-    headers: matched.headers ?? {},
-  };
-}
+const routingEngine = new RoutingEngine();
+// (Removed heuristic resolveModelToProvider in favor of RoutingEngine)
 
 /**
  * Builds the appropriate headers for a provider request.
  */
-function buildProviderHeaders(provider: ResolvedProvider): Record<string, string> {
+function buildProviderHeaders(provider: { type: string; decryptedApiKey?: string; headers?: Record<string, string> }): Record<string, string> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    ...provider.headers,
+    ...(provider.headers || {}),
   };
 
-  if (provider.apiKey) {
+  if (provider.decryptedApiKey) {
     if (provider.type === 'anthropic') {
-      headers['x-api-key'] = provider.apiKey;
+      headers['x-api-key'] = provider.decryptedApiKey;
       headers['anthropic-version'] = '2023-06-01';
     } else {
-      headers['Authorization'] = `Bearer ${provider.apiKey}`;
+      headers['Authorization'] = `Bearer ${provider.decryptedApiKey}`;
     }
   }
 
@@ -150,9 +67,11 @@ export async function registerChatRoutes(server: FastifyInstance): Promise<void>
     }
 
     // ─── Resolve provider ───
-    const provider = await resolveModelToProvider(body.model);
+    const workspaceId = (request.headers['x-vas-workspace-id'] as string) || undefined;
+    const agentId = (request.headers['x-vas-agent-id'] as string) || undefined;
+    const route = await routingEngine.resolve(body.model, workspaceId, agentId);
 
-    if (!provider) {
+    if (!route) {
       return reply.status(404).send({
         error: {
           message: `No provider found for model: ${body.model}. Configure a provider first.`,
@@ -160,6 +79,13 @@ export async function registerChatRoutes(server: FastifyInstance): Promise<void>
           code: 'model_not_found',
         },
       });
+    }
+
+    const { provider, model: targetModel } = route;
+    
+    // Override the model with the resolved modelId if it changed through routing
+    if (body.model !== targetModel.modelId) {
+      body.model = targetModel.modelId;
     }
 
     const targetUrl = `${provider.baseUrl.replace(/\/+$/, '')}/chat/completions`;

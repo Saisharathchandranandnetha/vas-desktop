@@ -1,5 +1,7 @@
 // ─── VAS Desktop — Auto Updater ───
-import { autoUpdater, type UpdateInfo, type ProgressInfo } from 'electron-updater';
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
+import type { UpdateInfo, ProgressInfo } from 'electron-updater';
 import { BrowserWindow } from 'electron';
 
 /** The update channel the user is subscribed to */

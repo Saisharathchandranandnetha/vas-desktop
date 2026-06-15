@@ -78,8 +78,8 @@ export function createMainWindow(): BrowserWindow {
       console.log('[VAS] Make sure the Next.js dev server is running on port 3000');
     });
   } else {
-    // In production, load the packaged Next.js standalone output
-    const indexPath = path.join(__dirname, '..', '..', 'renderer', 'index.html');
+    // In production, load the packaged Next.js static export
+    const indexPath = path.join(__dirname, '..', 'renderer', 'index.html');
     mainWindow.loadFile(indexPath).catch((err) => {
       console.error('[VAS] Failed to load production build:', err);
     });

@@ -10,6 +10,31 @@ files:
   - dist/**/*
   - package.json
   - "!**/*.{ts,map}"
+  - from: "../../packages/shared"
+    to: "node_modules/@vas/shared"
+    filter:
+      - "dist/**/*"
+      - "package.json"
+  - from: "../../packages/database"
+    to: "node_modules/@vas/database"
+    filter:
+      - "dist/**/*"
+      - "package.json"
+  - from: "../../packages/provider-sdk"
+    to: "node_modules/@vas/provider-sdk"
+    filter:
+      - "dist/**/*"
+      - "package.json"
+  - from: "../../packages/agent-sdk"
+    to: "node_modules/@vas/agent-sdk"
+    filter:
+      - "dist/**/*"
+      - "package.json"
+  - from: "../../packages/mcp-sdk"
+    to: "node_modules/@vas/mcp-sdk"
+    filter:
+      - "dist/**/*"
+      - "package.json"
 
 asar: true
 compression: maximum

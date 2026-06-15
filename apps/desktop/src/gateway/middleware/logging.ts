@@ -10,12 +10,13 @@ import type { FastifyInstance } from 'fastify';
 export function requestLoggingMiddleware(server: FastifyInstance): void {
   // ─── onRequest: record start time ───
   server.addHook('onRequest', async (request) => {
-    (request as Record<string, unknown>).__startTime = Date.now();
+    (request as unknown as Record<string, unknown>).__startTime = Date.now();
   });
 
   // ─── onResponse: log completed request ───
   server.addHook('onResponse', async (request, reply) => {
-    const startTime = (request as Record<string, unknown>).__startTime as number | undefined;
+    const req = request as unknown as Record<string, unknown>;
+    const startTime = req.__startTime as number | undefined;
     const latencyMs = startTime ? Date.now() - startTime : 0;
     const statusCode = reply.statusCode;
     const method = request.method;

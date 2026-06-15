@@ -5,7 +5,7 @@ import { motion } from 'motion/react';
 import { Shell } from '@/components/layout/shell';
 import { EmptyState } from '@/components/shared/empty-state';
 import { useModels, useProviders } from '@/hooks/use-ipc';
-import { cn, formatCost, formatNumber } from '@/lib/utils';
+import { formatCost, formatNumber } from '@/lib/utils';
 import {
   Box,
   Search,
@@ -29,7 +29,7 @@ const stagger = {
       transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
   },
-};
+} as const;
 
 export default function ModelsPage() {
   const { data: models, isLoading } = useModels();

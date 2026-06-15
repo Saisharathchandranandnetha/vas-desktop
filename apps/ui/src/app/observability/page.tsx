@@ -35,7 +35,7 @@ const stagger = {
       transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
   },
-};
+} as const;
 
 // Generate time-series data from recent requests for the chart
 function generateChartData(

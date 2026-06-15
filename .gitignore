@@ -54,3 +54,8 @@ coverage/
 # Misc
 *.pem
 *.p12
+
+# Local logs and test scripts
+*.log
+test-run.js
+

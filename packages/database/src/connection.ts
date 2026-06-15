@@ -2,7 +2,7 @@ import { join } from 'node:path';
 import { mkdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import initSqlJs, { type Database as SqlJsDatabase } from 'sql.js';
 import { drizzle } from 'drizzle-orm/sql-js';
-import type { SqlJsDatabase as DrizzleSqlJsDatabase } from 'drizzle-orm/sql-js';
+import type { SQLJsDatabase as DrizzleSqlJsDatabase } from 'drizzle-orm/sql-js';
 import { DB_FILENAME } from '@vas/shared';
 import * as schema from './schema/index.js';
 import * as relations from './relations.js';

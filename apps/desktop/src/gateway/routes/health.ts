@@ -15,7 +15,7 @@ export async function registerHealthRoutes(server: FastifyInstance): Promise<voi
       let providerStats = { total: 0, healthy: 0, degraded: 0, down: 0 };
 
       try {
-        const { getSettingsStore } = await import('../main/ipc/settings.js');
+        const { getSettingsStore } = await import('../../main/ipc/settings.js');
         const store = getSettingsStore();
         const providers = (store.get('providers') as Array<{
           isEnabled: boolean;

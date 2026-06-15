@@ -6,7 +6,6 @@ import { Shell } from '@/components/layout/shell';
 import { StatusBadge } from '@/components/shared/status-badge';
 import { EmptyState } from '@/components/shared/empty-state';
 import { useMcpServers, useStartMcpServer, useStopMcpServer } from '@/hooks/use-ipc';
-import { cn } from '@/lib/utils';
 import {
   Plug,
   Plus,
@@ -32,7 +31,7 @@ const stagger = {
       transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
   },
-};
+} as const;
 
 function McpServerCard({
   server,

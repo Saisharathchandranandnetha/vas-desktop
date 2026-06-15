@@ -1,5 +1,4 @@
-// ─── Shared Utilities ───
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 
 /** Generate a unique ID */
 export function generateId(): string {

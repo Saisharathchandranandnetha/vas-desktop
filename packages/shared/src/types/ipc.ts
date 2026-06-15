@@ -113,7 +113,7 @@ export interface IpcMcpInstallConfig {
   autoStart?: boolean;
 }
 
-export type ProviderType = 'openai' | 'anthropic' | 'gemini' | 'openai_compat' | 'custom';
+export type ProviderType = 'openai' | 'anthropic' | 'gemini' | 'openai_compat' | 'custom' | 'openrouter' | 'groq' | 'deepseek' | 'mistral' | 'ollama' | 'lmstudio' | 'vllm';
 export type AgentType =
   | 'claude_code'
   | 'codex'

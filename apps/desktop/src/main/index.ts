@@ -1,17 +1,12 @@
 // ─── VAS Desktop — Electron Main Process Entry Point ───
 import { app, BrowserWindow } from 'electron';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { createMainWindow } from './window.js';
 import { createTray } from './tray.js';
 import { createApplicationMenu } from './menu.js';
 import { initAutoUpdater } from './updater.js';
 import { registerAllIpcHandlers } from './ipc/handlers.js';
 import { startGateway, stopGateway } from '../gateway/server.js';
-
-// ESM __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import { initDatabase, runMigrations } from '@vas/database';
 
 // ─── Security: enable sandbox for all renderers ───
 app.enableSandbox();
@@ -36,6 +31,14 @@ if (!gotTheLock) {
   app.whenReady().then(async () => {
     try {
       console.log('[VAS] Starting VAS Desktop...');
+
+      // 0. Initialize Database
+      console.log('[VAS] Initializing database...');
+      const dbPath = app.getPath('userData');
+      console.log(`[VAS] Database folder: ${dbPath}`);
+      const db = await initDatabase(dbPath);
+      console.log('[VAS] Running migrations...');
+      runMigrations(db);
 
       // 1. Register IPC handlers (must happen before window creation)
       console.log('[VAS] Registering IPC handlers...');

@@ -19,11 +19,11 @@
     "noFallthroughCasesInSwitch": true,
     "incremental": true,
     "paths": {
-      "@vas/shared": ["./packages/shared/src"],
-      "@vas/database": ["./packages/database/src"],
-      "@vas/provider-sdk": ["./packages/provider-sdk/src"],
-      "@vas/agent-sdk": ["./packages/agent-sdk/src"],
-      "@vas/mcp-sdk": ["./packages/mcp-sdk/src"]
+      "@vas/shared": ["./packages/shared/dist"],
+      "@vas/database": ["./packages/database/dist"],
+      "@vas/provider-sdk": ["./packages/provider-sdk/dist"],
+      "@vas/agent-sdk": ["./packages/agent-sdk/dist"],
+      "@vas/mcp-sdk": ["./packages/mcp-sdk/dist"]
     }
   },
   "exclude": ["node_modules", "dist", ".next", ".turbo"]

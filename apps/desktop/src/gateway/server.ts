@@ -47,14 +47,6 @@ export async function startGateway(): Promise<FastifyInstance> {
   server = Fastify({
     logger: {
       level: 'info',
-      transport: {
-        target: 'pino-pretty',
-        options: {
-          colorize: true,
-          ignore: 'pid,hostname',
-          translateTime: 'HH:MM:ss',
-        },
-      },
     },
     trustProxy: false,
     requestTimeout: 120_000, // 2 minutes for long LLM requests

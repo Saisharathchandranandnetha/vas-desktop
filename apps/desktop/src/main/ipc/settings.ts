@@ -1,18 +1,18 @@
 // ─── VAS Desktop — Settings IPC Handlers ───
-import { ipcMain, app } from 'electron';
+import { ipcMain } from 'electron';
 import { IPC_CHANNELS, DEFAULT_CONFIG } from '@vas/shared';
 import ElectronStore from 'electron-store';
 
 // ─── Singleton Store ───
-let store: ElectronStore | null = null;
+let store: ElectronStore<any> | null = null;
 
 /**
  * Returns the singleton electron-store instance.
  * Lazily initialized on first call.
  */
-export function getSettingsStore(): ElectronStore {
+export function getSettingsStore(): ElectronStore<any> {
   if (!store) {
-    store = new ElectronStore({
+    const newStore = new ElectronStore({
       name: 'vas-settings',
       defaults: {
         config: DEFAULT_CONFIG,
@@ -24,7 +24,8 @@ export function getSettingsStore(): ElectronStore {
         },
       },
     });
-    console.log(`[VAS:Settings] Store path: ${store.path}`);
+    console.log(`[VAS:Settings] Store path: ${newStore.path}`);
+    store = newStore;
   }
   return store;
 }

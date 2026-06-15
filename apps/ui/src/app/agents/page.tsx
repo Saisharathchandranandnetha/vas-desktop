@@ -46,7 +46,7 @@ const stagger = {
       transition: { type: 'spring', stiffness: 300, damping: 24 },
     },
   },
-};
+} as const;
 
 export default function AgentsPage() {
   const { data: agents, isLoading } = useAgents();
