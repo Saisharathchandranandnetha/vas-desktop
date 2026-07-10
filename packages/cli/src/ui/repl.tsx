@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { render, Box, Text, useInput, useApp } from 'ink';
 import { Config, SystemPlugin } from '../types.js';
 
@@ -11,25 +11,15 @@ export function InteractiveREPL({ config, plugins }: REPLProps) {
   const { exit } = useApp();
   const [inputVal, setInputVal] = useState('');
   const [history, setHistory] = useState<string[]>([
-    'Agent: Hello! I am the VAS Desktop Core Agent.',
-    'System: Ready to accept commands or reasoning prompts.'
+    'Welcome! Type a command or ask a question.',
+    'Loaded plugins: ' + (plugins.length > 0 ? plugins.map(p => p.name).join(', ') : 'none')
   ]);
-  const [status, setStatus] = useState<'IDLE' | 'THINKING' | 'SANDBOX_EXEC'>('IDLE');
-  const [logs, setLogs] = useState<string[]>([
-    'System initialized.',
-    'Config loaded successfully.',
-    `Plugins scanned: ${plugins.length} found.`
-  ]);
+  const [status, setStatus] = useState<'auto' | 'thinking' | 'sandbox'>('auto');
 
-  // Handle Input
+  // Input Handling
   useInput((input, key) => {
     if (key.ctrl && input === 'c') {
       exit();
-      return;
-    }
-
-    if (key.ctrl && input === 'l') {
-      setHistory([]);
       return;
     }
 
@@ -37,10 +27,9 @@ export function InteractiveREPL({ config, plugins }: REPLProps) {
       if (!inputVal.trim()) return;
 
       const userText = inputVal;
-      setHistory(prev => [...prev, `User ❯ ${userText}`]);
+      setHistory(prev => [...prev, `> ${userText}`]);
       setInputVal('');
-      setStatus('THINKING');
-      setLogs(prev => [...prev.slice(-4), `Running command: ${userText}`]);
+      setStatus('thinking');
 
       // Check if command matches any registered plugin command
       let matchedCmd = false;
@@ -48,28 +37,25 @@ export function InteractiveREPL({ config, plugins }: REPLProps) {
         for (const cmd of plugin.commands) {
           if (cmd.name === userText.trim()) {
             matchedCmd = true;
-            setStatus('SANDBOX_EXEC');
-            setLogs(prev => [...prev.slice(-4), `Entering sandbox mode for ${cmd.name}`]);
+            setStatus('sandbox');
             
             setTimeout(() => {
               setHistory(prev => [...prev, `System: Executed command [${cmd.name}] successfully.`]);
-              setLogs(prev => [...prev.slice(-4), `Exited sandbox cleanly.`]);
-              setStatus('IDLE');
-            }, 1000);
+              setStatus('auto');
+            }, 800);
             break;
           }
         }
       }
 
       if (!matchedCmd) {
-        // Fallback simulated agent response
         setTimeout(() => {
           setHistory(prev => [
             ...prev, 
-            `Agent: I received your query "${userText}". I am currently running in Phase 0 scaffolding mode. Try running one of the plugin commands listed on the right panel.`
+            `Agent: I heard you say "${userText}". Try running one of the registered commands.`
           ]);
-          setStatus('IDLE');
-        }, 1200);
+          setStatus('auto');
+        }, 1000);
       }
       return;
     }
@@ -79,94 +65,84 @@ export function InteractiveREPL({ config, plugins }: REPLProps) {
       return;
     }
 
-    // Capture standard input
+    // Capture standard printable characters
     if (input && input.length === 1 && !key.meta && !key.ctrl) {
       setInputVal(prev => prev + input);
     }
   });
 
   return (
-    <Box flexDirection="column" width={80} borderStyle="double" borderColor="cyan" padding={1}>
-      {/* Title Bar */}
-      <Box justifyContent="space-between" marginBottom={1}>
-        <Text color="black" backgroundColor="cyan" bold> VAS DESKTOP CLI v0.1.0 </Text>
-        <Text color="yellow" bold>[STATUS: {status}]</Text>
-      </Box>
-
-      {/* Main Panels Layout (Split Screen) */}
-      <Box flexDirection="row" height={12}>
-        {/* Left Panel: Chat History */}
-        <Box 
-          flexDirection="column" 
-          width={50} 
-          borderStyle="round" 
-          borderColor="blue" 
-          padding={1}
-          marginRight={1}
-        >
-          <Box marginBottom={1}>
-            <Text color="blue" bold underline>CONVERSATION LOG</Text>
-          </Box>
-          <Box flexDirection="column">
-            {history.slice(-5).map((line, index) => {
-              const isUser = line.startsWith('User ❯');
-              const isSystem = line.startsWith('System:');
-              let color = 'white';
-              if (isUser) color = 'yellow';
-              if (isSystem) color = 'magenta';
-              return (
-                <Text key={index} color={color}>
-                  {line}
-                </Text>
-              );
-            })}
-          </Box>
+    <Box flexDirection="column" paddingX={1} width={80}>
+      {/* Sleek, Branded ASCII Art Header */}
+      <Box flexDirection="row" marginBottom={1}>
+        <Box flexDirection="column" marginRight={2}>
+          <Text color="cyan" bold> __      __   _    _____  </Text>
+          <Text color="cyan" bold> \ \    / /  / \  / ____| </Text>
+          <Text color="cyan" bold>  \ \  / /  / _ \ \___ \  </Text>
+          <Text color="cyan" bold>   \ \/ /  / ___ \____) | </Text>
+          <Text color="cyan" bold>    \__/  /_/   \_\_____/  </Text>
         </Box>
-
-        {/* Right Panel: Metadata & System Logs */}
-        <Box 
-          flexDirection="column" 
-          width={28} 
-          borderStyle="round" 
-          borderColor="magenta" 
-          padding={1}
-        >
-          <Text color="magenta" bold underline>🔌 PLUGINS LOADED</Text>
-          {plugins.length === 0 ? (
-            <Text color="dim">None</Text>
-          ) : (
-            plugins.map(p => (
-              <Text key={p.name} color="green">
-                • {p.name} (v{p.version})
-              </Text>
-            ))
-          )}
-
-          <Box marginTop={1} flexDirection="column">
-            <Text color="magenta" bold underline>📋 TELEMETRY LOGS</Text>
-            {logs.slice(-3).map((log, index) => (
-              <Text key={index} color="dim" wrap="truncate-end">
-                › {log}
-              </Text>
-            ))}
-          </Box>
+        <Box flexDirection="column" justifyContent="center">
+          <Text bold color="white">VAS Desktop CLI v0.1.0</Text>
+          <Text color="dim">active workspace: C:\Users\gunde\Documents\Vas_Projects</Text>
+          <Text color="dim">plugins: {plugins.map(p => `${p.name}@${p.version}`).join(', ')}</Text>
         </Box>
       </Box>
 
-      {/* Interactive Input Area */}
-      <Box borderStyle="single" borderColor="green" paddingLeft={1} marginTop={1} flexDirection="column">
+      {/* Thin line separator */}
+      <Text color="dim">────────────────────────────────────────────────────────────────────────</Text>
+
+      {/* Main Conversation Stream (Borderless and clean) */}
+      <Box flexDirection="column" marginY={1} minHeight={6}>
+        {history.map((line, index) => {
+          if (line.startsWith('>')) {
+            return (
+              <Text key={index} color="yellow">
+                {line}
+              </Text>
+            );
+          }
+          if (line.startsWith('Agent:')) {
+            return (
+              <Text key={index} color="green">
+                {line}
+              </Text>
+            );
+          }
+          if (line.startsWith('System:')) {
+            return (
+              <Text key={index} color="magenta">
+                {line}
+              </Text>
+            );
+          }
+          return (
+            <Text key={index} color="white">
+              {line}
+            </Text>
+          );
+        })}
+        {status === 'thinking' && (
+          <Text color="magenta" italic>Agent is thinking...</Text>
+        )}
+      </Box>
+
+      {/* Clean Bottom Prompt & Divider */}
+      <Text color="dim">────────────────────────────────────────────────────────────────────────</Text>
+      
+      <Box marginY={1}>
+        <Text color="cyan" bold>❯ </Text>
+        <Text color="white">{inputVal}</Text>
+        <Text color="white" inverse> </Text>
+      </Box>
+
+      {/* Sleek, Dark Status Bar */}
+      <Box backgroundColor="gray" paddingX={1} justifyContent="space-between">
         <Box>
-          <Text color="green" bold>Query ❯ </Text>
-          <Text color="white">{inputVal}</Text>
-          <Text color="white" inverse={true}> </Text>
+          <Text color="black" bold>{status}</Text>
+          <Text color="black"> | gunde</Text>
         </Box>
-      </Box>
-
-      {/* Footer Info */}
-      <Box justifyContent="space-between" marginTop={1}>
-        <Text color="dim">[Enter] Submit Prompt</Text>
-        <Text color="dim">[Ctrl+L] Clear Screen</Text>
-        <Text color="dim">[Ctrl+C] Exit CLI</Text>
+        <Text color="black" bold>Gemini 3.5 Flash (High)</Text>
       </Box>
     </Box>
   );
