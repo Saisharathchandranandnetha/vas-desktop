@@ -68,6 +68,17 @@ pnpm build
 
 ---
 
+## Road to AGI Roadmap (CLI)
+
+- [x] **Phase 0: Core CLI Foundation** — Dynamic ESM plugins, configuration loader, pino background logger, sandbox rules, and Effect-ts orchestration loop.
+- [ ] **Phase 1: Skills & Plugins (Active)** — Folder-triggered `SKILL.md` system, plugin hook lifecycles, and auto-discovery.
+- [ ] **Phase 2: Subagents & Orchestration** — Named background role-agents with message-based topologies.
+- [ ] **Phase 3: MCP Tools** — Dynamic client configuration for Model Context Protocol servers.
+- [ ] **Phase 4: Session Memory System** — Cross-session persistent memories and indexing.
+- [ ] **Phase 5: Team Collaboration / CRDT** — Real-time offline-first sync (Yjs + LevelDB).
+
+---
+
 ## License
 
 Private / Proprietary. All rights reserved.

@@ -7,9 +7,15 @@
 
 ## Active Plan
 
-📄 **[present-work-1.md](./present-work-1.md)** — Phase 0: Core CLI Foundation
+📄 **[present-work-2.md](./present-work-2.md)** — Phase 1: Skills & Plugins
 
-Start here. Read the full plan before writing any code.
+Please make sure you have read this active plan before contributing.
+
+---
+
+## Completed Phases
+
+- [x] 📄 **[present-work-1.md](./present-work-1.md)** — Phase 0: Core CLI Foundation
 
 ---
 
