@@ -30,11 +30,16 @@ release/
 .env.local
 .env.*.local
 
-# IDE
-.vscode/settings.json
+# IDE — never reveal
+.vscode/
 .idea/
 *.swp
 *.swo
+
+# AI tooling — never reveal what we use to build this
+.claude/
+.claude-flow/
+*.claude
 
 # OS
 .DS_Store
@@ -58,4 +63,13 @@ coverage/
 # Local logs and test scripts
 *.log
 test-run.js
+
+# ─────────────────────────────────────────────────────────────
+# CONFIDENTIAL — never commit or push (IP, plans, skills).
+# Enforced by .githooks/pre-commit and .githooks/pre-push.
+# Activate with:  git config core.hooksPath .githooks
+# ─────────────────────────────────────────────────────────────
+ruflo/                  # private planning, research, roadmaps, PCB IP
+.claude/skills/         # private agent skills (built IP)
+confidential/           # future private vault (any name matching this)
 
