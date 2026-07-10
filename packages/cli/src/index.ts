@@ -20,7 +20,7 @@ async function bootstrap() {
     // 3. Command Dispatch (Simple Router for Part 1)
     if (command === 'tui') {
       const { startREPL } = await import('./ui/repl.js');
-      startREPL();
+      startREPL(config, plugins);
       return;
     }
 
