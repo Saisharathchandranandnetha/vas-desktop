@@ -18,6 +18,12 @@ async function bootstrap() {
     const plugins = registry.getPlugins();
     
     // 3. Command Dispatch (Simple Router for Part 1)
+    if (command === 'tui') {
+      const { startREPL } = await import('./ui/repl.js');
+      startREPL();
+      return;
+    }
+
     if (command === 'help') {
       console.log('VAS Desktop CLI (Core Phase 0)');
       console.log('\nAvailable Plugins & Commands:');

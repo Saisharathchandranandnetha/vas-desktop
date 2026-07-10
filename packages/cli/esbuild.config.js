@@ -10,5 +10,5 @@ esbuild.build({
     js: '#!/usr/bin/env node',
   },
   // Mark native modules or peer dependencies as external if needed
-  external: ['esbuild', 'pino', 'cosmiconfig', 'zod']
+  external: ['esbuild', 'pino', 'cosmiconfig', 'zod', 'react', 'ink', 'effect']
 }).catch(() => process.exit(1));
